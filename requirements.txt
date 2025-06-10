@@ -1,0 +1,20 @@
+ujson
+simplejson
+numpy
+resampy
+tf_slim
+six
+soundfile
+librosa
+imbalanced-learn
+requests
+rich
+pyyaml
+gdown
+click
+tensorflow-macos; sys_platform == 'darwin'
+tensorflow-metal; sys_platform == 'darwin'
+tensorflow; sys_platform != 'darwin'
+torch -f https://download.pytorch.org/whl/cpu/torch_stable.html
+torchaudio -f https://download.pytorch.org/whl/cpu/torch_stable.html
+deepfilternet

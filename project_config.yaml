@@ -1,0 +1,73 @@
+# Project configuration file
+# This file defines the different parameters needed to run the code of this project #
+
+
+## Data processing parameters ##
+data_structure:
+  # - data/external
+  - data/interim
+  - data/processed
+  - data/raw
+
+# Ps. directory paths are automaticly combined with the corresponding base_dir in the scripts
+MUStARD:
+
+  # Download and raw data parameters
+  raw:
+    data_url: "https://drive.google.com/uc?id=1i9ixalVcXskA5_BkNnbR60sqJqvGyi6E"
+    json_url: "https://raw.githubusercontent.com/soujanyaporia/MUStARD/master/data/sarcasm_data.json"
+    base_dir: &M_raw_base_dir "data/raw/MUStARD/"
+    data_dir: &M_raw_data_dir "utterances_final/"
+    json_dir: &M_raw_json_dir "data/raw/MUStARD/"
+    json_name: &M_raw_json_name "sarcasm_data.json"
+
+  # Audio from video extraction parameters
+  audio_extract:
+    in_base_dir: *M_raw_base_dir
+    in_data_dir: *M_raw_data_dir
+    in_data_type: ".mp4"
+    out_base_dir: &M_extr_base_dir "data/interim/MUStARD/"
+    out_data_dir: &M_extr_data_dir "from_video_extractedAndFiltered_audio"
+    out_data_type: ".wav"
+    ffmpeg:
+      ac: '1'               # Channel mapping (1 --> mono)
+      ar: '48000'           # Sampling rate in Hz
+      codec: 'pcm_s16le'  # ffmpeg audio codec
+      af: 'speechnorm=e=6.25:r=0.00001:l=1' # applied filter (separate filters with commas)
+
+  # Voice extraction parameters
+  #   Ps. extracted voice data is also refered as denoised data in our code!
+  extract_voice:
+    in_base_dir: *M_extr_base_dir
+    in_data_dir: *M_extr_data_dir
+    out_base_dir: &M_denoised_base_dir "data/processed/MUStARD/"
+    out_data_dir: &M_denoised_data_dir "voice_denoised"
+
+  # Data augmentation parameters
+  data_augmentation:
+    in_base_dir: *M_denoised_base_dir
+    in_data_dir: *M_denoised_data_dir
+    out_base_dir: &M_aug_denoised_base_dir "data/processed/MUStARD/"
+    out_data_dir: &M_aug_denoised_data_dir "voice_augmented"
+
+  # One bloc code training parameters
+  training:
+    json_dir: *M_raw_json_dir
+    json_name: *M_raw_json_name
+    denois_base_dir: *M_denoised_base_dir
+    denois_data_dir: *M_denoised_data_dir
+    aug_base_dir: *M_aug_denoised_base_dir
+    aug_data_dir: *M_aug_denoised_data_dir
+    eager_mode: true
+    nb_batches: 32
+    train_vggish: true
+    checkpoint: 'src/features/vggish_model.ckpt'
+    pca_params: 'src/features/vggish_pca_params.npz'
+    overSample_rdm_state: 42
+    train_test_size: 0.2
+    learning_rate: 0.00001 #0.01
+    epochs: 200
+    batch_size: 16 #32
+
+
+
